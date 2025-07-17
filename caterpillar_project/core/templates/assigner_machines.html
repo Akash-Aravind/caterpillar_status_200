@@ -1,0 +1,33 @@
+{% extends 'base_assigner.html' %}
+
+{% block title %}Assigner - Machine Conditions{% endblock %}
+
+{% block content %}
+    <h2>Machine Conditions</h2>
+    <table border="1" cellpadding="10">
+        <tr>
+            <th>Machine ID</th>
+            <th>Status</th>
+            <th>Issue</th>
+            <th>Last Checked</th>
+        </tr>
+        <tr>
+            <td>MC-201</td>
+            <td>Critical</td>
+            <td>Motor Overload</td>
+            <td>Just now</td>
+        </tr>
+        <tr>
+            <td>MC-202</td>
+            <td>Good</td>
+            <td>None</td>
+            <td>15 mins ago</td>
+        </tr>
+        <tr>
+            <td>MC-203</td>
+            <td>Warning</td>
+            <td>Low oil</td>
+            <td>5 mins ago</td>
+        </tr>
+    </table>
+{% endblock %}

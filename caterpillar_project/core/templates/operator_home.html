@@ -1,0 +1,68 @@
+<!-- templates/operator_home.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Welcome, {{ request.session.operator_username }}</h2>
+
+  {% if tasks %}
+    <ul>
+      {% for task in tasks %}
+        <div class="task-card" style="border: 1px solid #ccc; padding: 15px; margin-bottom: 20px;">
+          <h3>{{ task.instance.title }}</h3>
+          <p>{{ task.instance.description }}</p>
+
+          <p><strong>Deadline:</strong> {{ task.instance.deadline|date:"Y-m-d H:i" }}</p>
+
+          <p><strong>Time Remaining:</strong> <span id="timer-{{ task.instance.id }}"></span></p>
+          <p><strong>Predicted Duration:</strong> {{ task.predicted_duration }} minutes</p>
+
+          <p><strong>Machines used:</strong></p>
+          <ul>
+            {% for machine in task.instance.machines.all %}
+              <li>
+                <a href="{% url 'machine_efficiency' machine.id %}">
+                  {{ machine.machine_name }} ({{ machine.machine_id }})
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+
+          <form method="post" action="{% url 'mark_task_done' task.instance.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success">Done</button>
+          </form>
+        </div>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No tasks assigned.</p>
+  {% endif %}
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    {% for task in tasks %}
+      const deadline{{ task.instance.id }} = new Date("{{ task.instance.deadline|date:'Y-m-d H:i:s' }}").getTime();
+      const timerElement{{ task.instance.id }} = document.getElementById("timer-{{ task.instance.id }}");
+
+      function updateTimer{{ task.instance.id }}() {
+        const now = new Date().getTime();
+        const distance = deadline{{ task.instance.id }} - now;
+
+        if (distance < 0) {
+          timerElement{{ task.instance.id }}.innerHTML = "Expired";
+          return;
+        }
+
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        timerElement{{ task.instance.id }}.innerHTML = `${hours}h ${minutes}m ${seconds}s`;
+      }
+
+      setInterval(updateTimer{{ task.instance.id }}, 1000);
+      updateTimer{{ task.instance.id }}();
+    {% endfor %}
+  </script>
+{% endblock %}
