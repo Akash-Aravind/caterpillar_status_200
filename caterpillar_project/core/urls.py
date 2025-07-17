@@ -19,5 +19,5 @@ urlpatterns = [
 
     path('operator/task/<int:task_id>/done/', views.mark_task_done, name='mark_task_done'),
     path('machine/<int:machine_id>/', views.machine_efficiency_view, name='machine_efficiency'),
-
+    path('test-anomaly/', views.test_anomaly_detector, name='test_anomaly'),
 ]

@@ -1,43 +1,104 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{% block title %}Operator Dashboard{% endblock %}</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <title>{% block title %}Dashboard{% endblock %}</title>
     <style>
         body {
             margin: 0;
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
+            background-color: #f4f4f4;
         }
+
         .sidebar {
-            width: 200px;
-            background-color: #333;
+            width: 240px;
+            background-color: #000000; /* Caterpillar black */
             height: 100vh;
-            color: white;
-            padding-top: 20px;
+            color: #f5f5f5;
             position: fixed;
+            display: flex;
+            flex-direction: column;
+            padding-top: 30px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.2);
         }
+
         .sidebar a {
-            display: block;
-            color: white;
-            padding: 12px;
+            color: #f5f5f5;
+            padding: 15px 25px;
             text-decoration: none;
+            font-weight: bold;
+            border-left: 5px solid transparent;
+            transition: all 0.3s ease;
         }
+
         .sidebar a:hover {
-            background-color: #575757;
+            background-color: #ffcc00; /* Caterpillar yellow */
+            color: #000000;
+            border-left: 5px solid #000000;
         }
+
         .content {
-            margin-left: 200px;
-            padding: 20px;
+            margin-left: 240px;
+            padding: 40px 50px;
             flex-grow: 1;
+            background-color: #ffffff;
+            min-height: 100vh;
+        }
+
+        h2 {
+            color: #000000;
+            font-size: 2rem;
+            border-bottom: 3px solid #ffcc00;
+            display: inline-block;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            font-size: 1rem;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            background-color: #ffcc00;
+            color: #000000;
+            border: none;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:hover {
+            background-color: #e6b800;
+            color: #000;
+        }
+
+        p {
+            font-size: 1.1rem;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Mobile Responsiveness */
+        @media screen and (max-width: 768px) {
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+                flex-direction: row;
+                justify-content: space-around;
+            }
+
+            .content {
+                margin-left: 0;
+                padding: 20px;
+            }
         }
     </style>
 </head>
 <body>
 
     <div class="sidebar">
-        <a href="/operator/home/">Home</a>
-        <a href="/operator/machines/">Machine Conditions</a>
+        <a href="{% url 'operator_home' %}">Home</a>
         <a href="/logout/">Logout</a>
     </div>
 

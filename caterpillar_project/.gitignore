@@ -1,0 +1,15 @@
+# Ignore compiled Python files
+__pycache__/
+*.pyc
+
+# Ignore model pickle files
+*.pkl
+
+# Ignore CSV files (like datasets or logs)
+*.csv
+
+# Ignore temporary or test scripts
+core/kkk.py
+
+# Ignore models directory entirely (if needed)
+models/

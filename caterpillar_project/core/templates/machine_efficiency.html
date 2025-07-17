@@ -1,8 +1,17 @@
-{% extends 'base.html' %}
+{% extends 'base_operator.html' %}
 
 {% block content %}
   <h2>Machine Efficiency</h2>
-  <p><strong>{{ machine.machine_name }} ({{ machine.machine_id }})</strong></p>
-  <p>The efficiency of this machine is <strong>{{ efficiency }}</strong>.</p>
-  <a href="{% url 'operator_home' %}" class="btn btn-primary">Back to Home</a>
+
+  <div style="border-radius: 8px; background-color: #f5f5f5; padding: 20px; max-width: 500px; box-shadow: 0 0 10px rgba(0,0,0,0.1); margin-bottom: 20px;">
+    <p><strong>Machine Name:</strong> {{ machine.machine_name }}</p>
+    <p><strong>Machine ID:</strong> {{ machine.machine_id }}</p>
+    <p><strong>Unique Identifier:</strong> {{ machine.unique_identifier }}</p>
+
+    <div style="margin-top: 15px; padding: 15px; background-color: {% if efficiency > 85 %}#c8e6c9{% elif efficiency > 60 %}#fff9c4{% else %}#ffcdd2{% endif %}; border-radius: 8px; text-align: center;">
+      <span style="font-size: 1.2em;"><strong>Current Efficiency:</strong> {{ efficiency }}%</span>
+    </div>
+  </div>
+
+  <a href="{% url 'operator_home' %}" style="text-decoration: none; color: white; background-color: #007bff; padding: 10px 20px; border-radius: 5px;">Back to Home</a>
 {% endblock %}

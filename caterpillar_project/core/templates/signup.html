@@ -1,24 +1,114 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Sign Up</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <meta charset="UTF-8">
+    <title>Sign Up - CAT ERP</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #1c1c1c;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #f1f1f1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #2c2c2c;
+            border: 2px solid #f4c20d;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 0 25px rgba(255, 200, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #f4c20d;
+            margin-bottom: 30px;
+        }
+
+        label {
+            font-weight: bold;
+            color: #f4c20d;
+            display: block;
+            text-align: left;
+            margin-bottom: 5px;
+        }
+
+        select, input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 10px 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+            background-color: #f1f1f1;
+            color: #333;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #f4c20d;
+            box-shadow: 0 0 8px rgba(244, 194, 13, 0.6);
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #f4c20d;
+            color: #1c1c1c;
+            font-weight: bold;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #e5b800;
+        }
+
+        a {
+            color: #f4c20d;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        p {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <h2>Sign Up Page</h2>
+        <h2>Sign Up</h2>
         <form method="POST">
             {% csrf_token %}
 
-            <label for="role">Select Role:</label><br>
+            <label for="role">Select Role:</label>
             <select name="role" required>
                 <option value="">-- Choose Role --</option>
                 <option value="operator">Operator</option>
                 <option value="assigner">Assigner</option>
-            </select><br><br>
+            </select>
 
-            <input type="text" name="username" placeholder="Username" required><br>
-            <input type="password" name="password" placeholder="Password" required><br>
+            <label for="username">Username:</label>
+            <input type="text" name="username" placeholder="Enter username" required>
+
+            <label for="password">Password:</label>
+            <input type="password" name="password" placeholder="Enter password" required>
+
             <button type="submit">Sign Up</button>
         </form>
         <p>Already have an account? <a href="/">Login here</a></p>

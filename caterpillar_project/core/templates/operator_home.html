@@ -1,23 +1,45 @@
-<!-- templates/operator_home.html -->
 {% extends 'base.html' %}
 
 {% block content %}
-  <h2>Welcome, {{ request.session.operator_username }}</h2>
+<style>
+  .task-card.green {
+    background-color: #d4edda; /* light green */
+  }
+  .task-card.orange {
+    background-color: #fff3cd; /* light orange */
+  }
+  .task-card.red {
+    background-color: #f8d7da; /* light red */
+  }
+</style>
+
+<div style="max-width: 800px; margin: 0 auto; padding: 20px;">
+  <h2 style="margin-bottom: 30px;">Welcome, {{ request.session.operator_username }}</h2>
 
   {% if tasks %}
-    <ul>
-      {% for task in tasks %}
-        <div class="task-card" style="border: 1px solid #ccc; padding: 15px; margin-bottom: 20px;">
-          <h3>{{ task.instance.title }}</h3>
-          <p>{{ task.instance.description }}</p>
+    {% for task in tasks %}
+      <div class="task-card" 
+           style="border: 1px solid #ccc; border-radius: 8px; padding: 20px; margin-bottom: 25px; box-shadow: 2px 2px 6px rgba(0,0,0,0.05);" 
+           data-duration="{{ task.predicted_duration }}" 
+           data-deadline="{{ task.instance.deadline|date:'c' }}" 
+           data-taskid="{{ task.instance.id }}">
+           
+        <h3 style="margin-top: 0;">{{ task.instance.title }}</h3>
+        <p>{{ task.instance.description }}</p>
 
-          <p><strong>Deadline:</strong> {{ task.instance.deadline|date:"Y-m-d H:i" }}</p>
+        <p><strong>Deadline:</strong> {{ task.instance.deadline|date:"Y-m-d H:i" }}</p>
 
-          <p><strong>Time Remaining:</strong> <span id="timer-{{ task.instance.id }}"></span></p>
-          <p><strong>Predicted Duration:</strong> {{ task.predicted_duration }} minutes</p>
+        <p><strong>Time Remaining:</strong>
+          <span class="timer" id="timer-{{ task.instance.id }}">
+            <span class="loading"> Loading...</span>
+          </span>
+        </p>
 
-          <p><strong>Machines used:</strong></p>
-          <ul>
+        <p><strong>Predicted Duration:</strong> {{ task.predicted_duration }} minutes</p>
+
+        <div>
+          <strong>Machines used:</strong>
+          <ul style="margin-top: 5px;">
             {% for machine in task.instance.machines.all %}
               <li>
                 <a href="{% url 'machine_efficiency' machine.id %}">
@@ -26,43 +48,84 @@
               </li>
             {% endfor %}
           </ul>
-
-          <form method="post" action="{% url 'mark_task_done' task.instance.id %}">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-success">Done</button>
-          </form>
         </div>
-      {% endfor %}
-    </ul>
+
+        <form method="post" action="{% url 'mark_task_done' task.instance.id %}" style="margin-top: 15px;">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-success" style="padding: 8px 16px; background-color: green; color: white; border: none; border-radius: 5px; cursor: pointer;">
+             Mark as Done
+          </button>
+        </form>
+      </div>
+    {% endfor %}
   {% else %}
     <p>No tasks assigned.</p>
   {% endif %}
+</div>
 {% endblock %}
 
 {% block scripts %}
-  <script>
-    {% for task in tasks %}
-      const deadline{{ task.instance.id }} = new Date("{{ task.instance.deadline|date:'Y-m-d H:i:s' }}").getTime();
-      const timerElement{{ task.instance.id }} = document.getElementById("timer-{{ task.instance.id }}");
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const alertedTasks = new Set();
 
-      function updateTimer{{ task.instance.id }}() {
-        const now = new Date().getTime();
-        const distance = deadline{{ task.instance.id }} - now;
+    function updateTimers() {
+      const taskCards = document.querySelectorAll('.task-card');
 
-        if (distance < 0) {
-          timerElement{{ task.instance.id }}.innerHTML = "Expired";
+      taskCards.forEach(card => {
+        const deadlineStr = card.dataset.deadline;
+        const predictedMinutes = parseFloat(card.dataset.duration);
+        const taskId = card.dataset.taskid;
+
+        const deadlineUTC = new Date(deadlineStr);
+        const deadlineIST = new Date(deadlineUTC.getTime() - 19800 * 1000);
+        const now = new Date();
+        const distance = deadlineIST - now;
+
+        const timer = card.querySelector('.timer');
+        card.classList.remove('green', 'orange', 'red');
+
+        if (isNaN(deadlineIST)) {
+          timer.innerHTML = " Invalid Date";
+          card.classList.add('red');
           return;
         }
 
+        if (distance < 0) {
+          timer.innerHTML = " Expired";
+          card.classList.add('red');
+          return;
+        }
+
+        const minutesRemaining = distance / (1000 * 60);
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
         const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-        timerElement{{ task.instance.id }}.innerHTML = `${hours}h ${minutes}m ${seconds}s`;
-      }
+        timer.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
 
-      setInterval(updateTimer{{ task.instance.id }}, 1000);
-      updateTimer{{ task.instance.id }}();
-    {% endfor %}
-  </script>
+        // Apply color to box
+        if (minutesRemaining <= 0) {
+          card.classList.add('red');
+        } else if (minutesRemaining <= 60) {
+          card.classList.add('orange');
+        } else {
+          card.classList.add('green');
+        }
+
+        // Alert
+        if (predictedMinutes > minutesRemaining && !alertedTasks.has(taskId)) {
+          alertedTasks.add(taskId);
+          alert("⚠️ Warning: Predicted time exceeds time remaining for task: " + taskId);
+          const msg = new SpeechSynthesisUtterance("Warning. Predicted time is more than time left for task " + taskId);
+          window.speechSynthesis.speak(msg);
+        }
+      });
+    }
+
+    updateTimers();
+    setInterval(updateTimers, 1000);
+  });
+</script>
 {% endblock %}

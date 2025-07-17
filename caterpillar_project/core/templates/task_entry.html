@@ -1,10 +1,76 @@
 <!-- templates/create_task.html -->
-{% extends 'base.html' %}
+{% extends 'base_assigner.html' %}
+
 {% block content %}
-<h2>Create Task</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Create</button>
-</form>
+<div class="container mt-4">
+    <div class="card shadow p-4 bg-light rounded">
+        <h2 class="mb-4 text-center">Create New Task</h2>
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="{{ form.assigned_to.id_for_label }}">{{ form.assigned_to.label }}</label>
+                {{ form.assigned_to }}
+            </div>
+        
+            <div class="form-group">
+                <label for="{{ form.title.id_for_label }}">Title</label>
+                {{ form.title }}
+            </div>
+        
+            <div class="form-group">
+                <label for="{{ form.description.id_for_label }}">Description</label>
+                {{ form.description }}
+            </div>
+        
+            <div class="form-group">
+                <label for="{{ form.deadline.id_for_label }}">Deadline</label>
+                {{ form.deadline }}
+            </div>
+        
+            <div class="form-group">
+                <label>{{ form.machines.label }}</label>
+                {{ form.machines }}
+            </div>
+        
+            <div class="form-group">
+                <label for="{{ form.task_type.id_for_label }}">Task Type</label>
+                {{ form.task_type }}
+            </div>
+        
+            <div class="form-group">
+                <label for="{{ form.terrain_type.id_for_label }}">Terrain Type</label>
+                {{ form.terrain_type }}
+            </div>
+        
+            <div class="form-group">
+                <label for="{{ form.material.id_for_label }}">Material</label>
+                {{ form.material }}
+            </div>
+        
+            <div class="form-group">
+                <label for="{{ form.task_complexity.id_for_label }}">Task Complexity</label>
+                {{ form.task_complexity }}
+            </div>
+        
+            <div class="form-group">
+                <label for="{{ form.accessibility_level.id_for_label }}">Accessibility Level</label>
+                {{ form.accessibility_level }}
+            </div>
+        
+            <div class="form-group">
+                <label for="{{ form.shift.id_for_label }}">Shift</label>
+                {{ form.shift }}
+            </div>
+        
+            <div class="form-group">
+                <label for="{{ form.activity_level.id_for_label }}">Activity Level</label>
+                {{ form.activity_level }}
+            </div>
+        
+            <button type="submit" class="btn btn-success">Create Task</button>
+        </form>
+        
+    </div>
+</div>
 {% endblock %}
